@@ -1,7 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"Go_lang/internal/pkg/storage"
+	"fmt"
+)
 
 func main() {
-	fmt.Println("Hello, 世界")
+	st, err := storage.NewStorage()
+	if err != nil {
+		fmt.Println("Smth went wrooong wrooong")
+	}
+	st.Set("1", "value1")
+	rs1 := st.Get("1")
+	rs2 := st.GetKind("1")
+	fmt.Println(rs1)
+	fmt.Println(rs2)
+
 }
