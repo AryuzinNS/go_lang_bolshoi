@@ -64,7 +64,7 @@ func (r Storage) GetKind(key string) string {
 	if !cde {
 		return "sth went wrong"
 	}
-	r.logger.Info("returned type of value")
+	r.logger.Info("returned type of value", zap.String("type", v_strct.type_of_val))
 	r.logger.Sync()
 	return v_strct.type_of_val
 
