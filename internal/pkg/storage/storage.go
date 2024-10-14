@@ -26,21 +26,23 @@ func (r Storage) Set(key, value string) {
 	} else {
 		r.inner[key] = Variable{str: value, type_of_val: "S"}
 	}
-
 }
 
-func (r Storage) Get(key string) interface{} {
-	v_strct, cde := r.inner[key]
+func (r Storage) Get_Var(key string) (Variable, bool) {
+	res, err := r.inner[key]
+	if !err {
+		return Variable{}, false
+	}
+	return res, true
+}
 
-	if !cde {
+func (r Storage) Get(key string) *string {
+	res, err := r.Get_Var(key)
+
+	if !err {
 		return nil
 	}
-	if v_strct.type_of_val == "D" {
-		return v_strct.integer
-	} else if v_strct.type_of_val == "S" {
-		return v_strct.str
-	}
-	return nil
+	return &res.str
 }
 
 func (r Storage) GetKind(key string) string {
