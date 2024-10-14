@@ -7,9 +7,8 @@ import (
 )
 
 type Variable struct {
-	type_of_val string
+	type_of_val Kind
 	str         string
-	integer     int
 }
 
 type Storage struct {
@@ -31,11 +30,14 @@ func NewStorage() (Storage, error) {
 }
 
 func (r Storage) Set(key, value string) {
-	defer r.logger.Sync()
-	if digit, err := strconv.Atoi(value); err == nil {
-		r.inner[key] = Variable{integer: digit, type_of_val: "D"}
-	} else {
-		r.inner[key] = Variable{str: value, type_of_val: "S"}
+	switch kind := GetType(value); kind {
+	case KindInt:
+		r.inner[key] = Variable{str: value, type_of_val: kind}
+	case KindStr:
+		r.inner[key] = Variable{str: value, type_of_val: kind}
+	case KindUD:
+		r.logger.Error("unknown value type", zap.String("key", key), zap.Any("value", value))
+
 	}
 	r.logger.Info("Added value on key:", zap.String("key", key), zap.Any("data", value))
 	r.logger.Sync()
@@ -62,10 +64,36 @@ func (r Storage) Get(key string) *string {
 func (r Storage) GetKind(key string) string {
 	v_strct, cde := r.inner[key]
 	if !cde {
+		r.logger.Error("unknown value type", zap.String("key", key))
 		return "sth went wrong"
 	}
-	r.logger.Info("returned type of value", zap.String("type", v_strct.type_of_val))
+	r.logger.Info("returned type of value", zap.String("type", string(v_strct.type_of_val)))
 	r.logger.Sync()
-	return v_strct.type_of_val
+	return string(v_strct.type_of_val)
 
+}
+
+type Kind string
+
+const (
+	KindInt Kind = "D"
+	KindStr Kind = "S"
+	KindUD  Kind = "UN"
+)
+
+func GetType(data string) Kind {
+	var val any
+	val, err := strconv.Atoi(data)
+
+	if err != nil {
+		val = data
+	}
+	switch val.(type) {
+	case int:
+		return KindInt
+	case string:
+		return KindStr
+	default:
+		return KindUD
+	}
 }
