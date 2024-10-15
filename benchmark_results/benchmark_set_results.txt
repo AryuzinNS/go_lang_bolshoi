@@ -1,0 +1,7 @@
+goos: linux
+goarch: amd64
+pkg: Go_lang
+cpu: 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz
+BenchmarkSet-8            980378              2125 ns/op             447 B/op          5 allocs/op
+PASS
+ok      Go_lang 2.110s

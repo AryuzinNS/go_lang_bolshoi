@@ -42,4 +42,5 @@ func BenchmarkSetGet(b *testing.B) {
 		s.Set(strconv.Itoa(i), strconv.Itoa(i))
 		s.Get(strconv.Itoa(i))
 	}
+
 }
